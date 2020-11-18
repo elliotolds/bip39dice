@@ -1,35 +1,16 @@
 import hashlib
 
-# A quick hacky script that lets me generate bip39 mnemonics
+# A quick hacky script that lets me generate bip39 English mnemonics.
+# See https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki
 
-print ord('1')
-print ord('2')
-print hashlib.sha256('12').hexdigest()
-print hashlib.sha256(b'\x31\x32').hexdigest()
-print hashlib.sha256(bytearray.fromhex('12')).hexdigest()
-
-val_bytes = bytearray.fromhex('aa') #bytearray('12'.decode("hex"));
-print val_bytes
-print len(val_bytes)
-print int(val_bytes[0])
-
-#val_int = int(
-
-#--------------------
-
-#print (46).to_bytes(32, byteorder='big')
-#print (46).bit_length()
-
-yolo = '1b5b0f669014e600046d6c3d9a4053980011b5b0f669014e600046d6c3d9a405'
-print "yolo"
-print (ord(yolo[0:1]))
+# The script prompts the user to keep entering d6 rolls until it has 
+# enough entropy to genreate a mnemonic. 
+# On average it will take 115 rolls.
 
 randstr = ''
 
 print "Enter a string of d6 dice rolls separated by spaces " + str(len(randstr)) + "/256:"
-
 userinput=raw_input()
-
 prevroll = -1
 
 # Keep reading in d6 rolls until we have 256 bits of entropy...
@@ -39,10 +20,10 @@ while(len(randstr) < 256):
 		roll = int(t)
 		if roll >= 1 and roll <= 6:
 			if prevroll == -1:
-				prevroll = roll;
+				prevroll = roll; # wait until we have two dice..
 			else:
 				pairsum = (prevroll-1)*6 + (roll-1)
-				if pairsum < 32:
+				if pairsum < 32: # we just throw away the entropy if it's in the range 33-36
 					addition = bin(pairsum)[2:].zfill(5)
 					print "(" + str(prevroll) +", " + str(roll) + ") --> " + str(pairsum) + " --> " + addition
 					randstr = randstr + addition
@@ -58,29 +39,21 @@ print "truncated random bits:"
 print randstr
 
 hexrandstr = hex(int(randstr, 2))[2:-1]
-hexrandstrOld = hexrandstr + hashlib.sha256(hexrandstr).hexdigest()[0:2]
-hexrandstrWithChecksum = hexrandstr + hashlib.sha256(bytearray.fromhex(hexrandstr)).hexdigest()[0:2]
+checksum = hashlib.sha256(bytearray.fromhex(hexrandstr)).hexdigest()[0:2]
+hexrandstrWithChecksum = hexrandstr + checksum
 print "hex without checksum:"
 print hexrandstr
+print "checksum: " + checksum
 print "hex with checksum:"
 print hexrandstrWithChecksum
-print "hex with old checksum:"
-print hexrandstrOld
-
-#print hashlib.sha256(stryak).hexdigest()
 
 binstr = bin(int(hexrandstrWithChecksum, 16))[2:]
 
 while len(binstr) < 264:
 	binstr = "0" + binstr
-	print "added a zero"
 	
-
 print "final binary string before wordlist:"
-print type(binstr)
-
-
-
+print binstr
 
 wordlist = [
 "abandon",
