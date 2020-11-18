@@ -1,6 +1,6 @@
 import hashlib
 
-# A quick hacky script to generate bip39 English mnemonics.
+# A quick hacky python2 script to generate bip39 English mnemonics.
 # See https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki
 
 # The script prompts the user to keep entering d6 rolls until it has 
