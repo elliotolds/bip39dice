@@ -1,20 +1,20 @@
 import hashlib
 
-# A quick hacky python2 script to generate bip39 English mnemonics.
+# A quick hacky script that lets me generate bip39 English mnemonics.
 # See https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki
 
-# The script prompts the user to keep entering d6 rolls until it has 
+# The script prompts the user to keep entering rolls of 6 sided dice until it has 
 # enough entropy to genreate a mnemonic. 
 # On average it will take 115 rolls.
 
 randstr = ''
 
-print "Enter a string of d6 dice rolls separated by spaces " + str(len(randstr)) + "/256:"
-userinput=raw_input()
 prevroll = -1
 
 # Keep reading in d6 rolls until we have 256 bits of entropy...
 while(len(randstr) < 256):
+	print "Enter a string of six sided dice rolls separated by spaces (progress: " + str(len(randstr)) + "/256):"
+	userinput=raw_input()
 	toks = userinput.split()
 	for t in toks:
 		roll = int(t)
@@ -23,22 +23,25 @@ while(len(randstr) < 256):
 				prevroll = roll; # wait until we have two dice..
 			else:
 				pairsum = (prevroll-1)*6 + (roll-1)
-				if pairsum < 32: # we just throw away the entropy if it's in the range 32-35
+				if pairsum < 32: # we get 5 bits of entropy of it's in the range 0-31
 					addition = bin(pairsum)[2:].zfill(5)
 					print "(" + str(prevroll) +", " + str(roll) + ") --> " + str(pairsum) + " --> " + addition
 					randstr = randstr + addition
-					#print randstr
+				else: #we get two bits of entropy if in the range 32-25
+					overflowsum = pairsum-32
+					addition = bin(overflowsum)[2:].zfill(2)
+					print "(" + str(prevroll) +", " + str(roll) + ") -overflow-> " + str(overflowsum) + " --> " + addition
+					randstr = randstr + addition
 				prevroll = -1
-				
-	if len(randstr) < 256:
-		print "Enter a string of d6 dice rolls separated by spaces " + str(len(randstr)) + "/256:"
-		userinput=raw_input()
-
+						
 randstr = randstr[:256]
 print "truncated random bits:"
 print randstr
 
 hexrandstr = hex(int(randstr, 2))[2:-1]
+while len(hexrandstr) < 64:
+	hexrandstr = "0" + hexrandstr
+
 checksum = hashlib.sha256(bytearray.fromhex(hexrandstr)).hexdigest()[0:2]
 hexrandstrWithChecksum = hexrandstr + checksum
 print "hex without checksum:"
@@ -2112,8 +2115,7 @@ for i in range(0, 24):
 	index = i*11;
 	sub = binstr[index:index+11]
 	print sub + " ---> " + wordlist[int(sub, 2)]
-	mnemonic = mnemonic + " " + wordlist[int(sub, 2)]
+	mnemonic = mnemonic + (" " if i > 0 else "") + wordlist[int(sub, 2)]
 	
-print mnemonic
-
+print "\n" + mnemonic
 
