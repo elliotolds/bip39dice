@@ -5,7 +5,7 @@ import hashlib
 
 # The script prompts the user to keep entering rolls of 6 sided dice until it has 
 # enough entropy to genreate a mnemonic. 
-# On average it will take 115 rolls.
+# On average it will take about 115 rolls.
 
 randstr = ''
 
