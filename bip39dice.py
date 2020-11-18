@@ -23,7 +23,7 @@ while(len(randstr) < 256):
 				prevroll = roll; # wait until we have two dice..
 			else:
 				pairsum = (prevroll-1)*6 + (roll-1)
-				if pairsum < 32: # we just throw away the entropy if it's in the range 33-36
+				if pairsum < 32: # we just throw away the entropy if it's in the range 32-36
 					addition = bin(pairsum)[2:].zfill(5)
 					print "(" + str(prevroll) +", " + str(roll) + ") --> " + str(pairsum) + " --> " + addition
 					randstr = randstr + addition
