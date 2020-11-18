@@ -5,15 +5,15 @@ import hashlib
 
 # The script prompts the user to keep entering rolls of 6 sided dice until it has 
 # enough entropy to genreate a mnemonic. 
-# On average it will take about 115 rolls.
+# On average it will take about 110 rolls.
 
 randstr = ''
 
 prevroll = -1
 
-# Keep reading in d6 rolls until we have 256 bits of entropy...
+# Keep asking the user for more d6 rolls until we have 256 bits of entropy...
 while(len(randstr) < 256):
-	print "Enter a string of six sided dice rolls separated by spaces (progress: " + str(len(randstr)) + "/256):"
+	print "Enter some six sided dice rolls separated by spaces (progress: " + str(len(randstr)) + "/256):"
 	userinput=raw_input()
 	toks = userinput.split()
 	for t in toks:
